@@ -16,26 +16,7 @@ connection = get_sql_connection()
 
 
 # --- TEMPORARY: remove after confirming users table is created ---
-@app.route('/setupUsersTable', methods=['GET'])
-def setup_users_table():
-    try:
-        conn = get_sql_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS users (
-                user_id INT AUTO_INCREMENT PRIMARY KEY,
-                username VARCHAR(255) UNIQUE NOT NULL,
-                password_hash VARCHAR(255) NOT NULL,
-                created_at DATETIME NOT NULL
-            );
-        """)
-        conn.commit()
-        cursor.execute("SHOW TABLES;")
-        tables = cursor.fetchall()
-        return jsonify({'status': 'done', 'tables_now': tables})
-    except Exception as e:
-        return jsonify({'error': str(e)})
-# --- END TEMPORARY ---
+
 
 
 @app.route('/signup', methods=['POST'])
