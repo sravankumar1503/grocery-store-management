@@ -21,57 +21,7 @@ def get_uom():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/setupTables', methods=['GET'])
-def setup_tables():
-    try:
-        conn = get_sql_connection()
-        cursor = conn.cursor()
 
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS uom (
-                uom_id INT AUTO_INCREMENT PRIMARY KEY,
-                uom_name VARCHAR(255) NOT NULL
-            );
-        """)
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS products (
-                product_id INT AUTO_INCREMENT PRIMARY KEY,
-                name VARCHAR(255) NOT NULL,
-                uom_id INT NOT NULL,
-                price_per_unit DECIMAL(10,2) NOT NULL,
-                FOREIGN KEY (uom_id) REFERENCES uom(uom_id)
-            );
-        """)
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS orders (
-                order_id INT AUTO_INCREMENT PRIMARY KEY,
-                customer_name VARCHAR(255) NOT NULL,
-                total DECIMAL(10,2) NOT NULL,
-                datetime DATETIME NOT NULL
-            );
-        """)
-
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS order_details (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                order_id INT NOT NULL,
-                product_id INT NOT NULL,
-                quantity DECIMAL(10,2) NOT NULL,
-                total_price DECIMAL(10,2) NOT NULL,
-                FOREIGN KEY (order_id) REFERENCES orders(order_id),
-                FOREIGN KEY (product_id) REFERENCES products(product_id)
-            );
-        """)
-
-        conn.commit()
-
-        cursor.execute("SHOW TABLES;")
-        tables = cursor.fetchall()
-        return jsonify({'status': 'done', 'tables_now': tables})
-    except Exception as e:
-        return jsonify({'error': str(e)})
 
 @app.route('/getProducts', methods=['GET'])
 def get_products():
