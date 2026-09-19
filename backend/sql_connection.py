@@ -1,5 +1,10 @@
+import os
 import mysql.connector
-import config
+
+try:
+    import config
+except ImportError:
+    config = None
 
 __cnx = None
 
@@ -8,9 +13,10 @@ def get_sql_connection():
     global __cnx
     if __cnx is None:
         __cnx = mysql.connector.connect(
-            user=config.DB_USER,
-            password=config.DB_PASSWORD,
-            host=config.DB_HOST,
-            database=config.DB_NAME
+            user=os.environ.get('DB_USER', config.DB_USER if config else None),
+            password=os.environ.get('DB_PASSWORD', config.DB_PASSWORD if config else None),
+            host=os.environ.get('DB_HOST', config.DB_HOST if config else None),
+            port=int(os.environ.get('DB_PORT', 3306)),
+            database=os.environ.get('DB_NAME', config.DB_NAME if config else None)
         )
     return __cnx
