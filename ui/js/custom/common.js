@@ -117,6 +117,16 @@ function productParser(product) {
     }
 }
 
+$(function () {
+    var username = getUsername();
+    if (username) {
+        $("#loggedInUsername").text("Hi, " + username);
+    }
+    $(document).on("click", "#logoutButton", function () {
+        logout();
+    });
+});
+
 function productDropParser(product) {
     return {
         id : product.id,
