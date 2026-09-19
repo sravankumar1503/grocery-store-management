@@ -23,12 +23,21 @@ def get_uom():
 
 @app.route('/debugConfig', methods=['GET'])
 def debug_config():
-    return jsonify({
-        'DB_HOST': os.environ.get('DB_HOST'),
-        'DB_NAME': os.environ.get('DB_NAME'),
-        'DB_USER': os.environ.get('DB_USER'),
-        'DB_PORT': os.environ.get('DB_PORT')
-    })
+    try:
+        conn = get_sql_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT DATABASE();")
+        current_db = cursor.fetchone()
+        cursor.execute("SHOW TABLES;")
+        tables = cursor.fetchall()
+        return jsonify({
+            'DB_HOST': os.environ.get('DB_HOST'),
+            'DB_NAME_env_var': os.environ.get('DB_NAME'),
+            'current_database_per_connection': current_db,
+            'tables_visible_to_this_connection': tables
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 @app.route('/getProducts', methods=['GET'])
 def get_products():
