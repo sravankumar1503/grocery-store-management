@@ -8,8 +8,59 @@ var productDeleteApiUrl = 'https://grocery-store-management-1qh4.onrender.com/de
 var orderListApiUrl = 'https://grocery-store-management-1qh4.onrender.com/getAllOrders';
 var orderSaveApiUrl = 'https://grocery-store-management-1qh4.onrender.com/insertOrder';
 var orderDetailsApiUrl = 'https://grocery-store-management-1qh4.onrender.com/getOrderDetails';
+var signupApiUrl = 'https://grocery-store-management-1qh4.onrender.com/signup';
+var loginApiUrl = 'https://grocery-store-management-1qh4.onrender.com/login';
 // For product drop in order
 var productsApiUrl = 'https://fakestoreapi.com/products';
+
+// Auth helpers
+function getToken() {
+    return localStorage.getItem('gsms_token');
+}
+
+function getUsername() {
+    return localStorage.getItem('gsms_username');
+}
+
+function saveSession(token, username) {
+    localStorage.setItem('gsms_token', token);
+    localStorage.setItem('gsms_username', username);
+}
+
+function logout() {
+    localStorage.removeItem('gsms_token');
+    localStorage.removeItem('gsms_username');
+    window.location.href = 'login.html';
+}
+
+// Redirect to login if there's no token. Call this at the top of any page
+// that requires being logged in.
+function requireLogin() {
+    if (!getToken()) {
+        window.location.href = 'login.html';
+    }
+}
+
+function showAuthError(selector, message) {
+    $(selector).text(message).show();
+}
+
+// Attach the Authorization header to every AJAX request automatically,
+// and send the user back to login if the server ever says the token is
+// missing/invalid/expired.
+$.ajaxSetup({
+    beforeSend: function (xhr) {
+        var token = getToken();
+        if (token) {
+            xhr.setRequestHeader('Authorization', 'Bearer ' + token);
+        }
+    },
+    statusCode: {
+        401: function () {
+            logout();
+        }
+    }
+});
 
 function callApi(method, url, data) {
     $.ajax({
