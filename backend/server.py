@@ -11,7 +11,7 @@ import auth_dao
 from auth import create_token, login_required
 
 app = Flask(__name__)
-
+CORS(app)
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -30,7 +30,6 @@ def signup():
     user_id = auth_dao.create_user(connection, username, password)
     token = create_token(user_id, username)
     response = jsonify({'token': token, 'username': username})
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -47,7 +46,6 @@ def login():
 
     token = create_token(user['user_id'], user['username'])
     response = jsonify({'token': token, 'username': user['username']})
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -55,7 +53,6 @@ def login():
 @login_required
 def whoami():
     response = jsonify({'user_id': request.user_id})
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -65,7 +62,6 @@ def get_uom():
     connection = get_sql_connection()
     response = uom_dao.get_uoms(connection)
     response = jsonify(response)
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -78,7 +74,6 @@ def insert_uom():
     response = jsonify({
         'uom_id': uom_id
     })
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -88,7 +83,6 @@ def get_products():
     connection = get_sql_connection()
     response = products_dao.get_all_products(connection, request.user_id)
     response = jsonify(response)
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -101,7 +95,6 @@ def insert_product():
     response = jsonify({
         'product_id': product_id
     })
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -114,7 +107,6 @@ def update_product():
     response = jsonify({
         'product_id': product_id
     })
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -124,7 +116,6 @@ def get_all_orders():
     connection = get_sql_connection()
     response = orders_dao.get_all_orders(connection, request.user_id)
     response = jsonify(response)
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -135,7 +126,6 @@ def get_order_details():
     order_id = request.args.get('order_id')
     response = orders_dao.get_order_details(connection, order_id, request.user_id)
     response = jsonify(response)
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -148,7 +138,6 @@ def insert_order():
     response = jsonify({
         'order_id': order_id
     })
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
@@ -160,7 +149,6 @@ def delete_product():
     response = jsonify({
         'product_id': request.form['product_id']
     })
-    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 
