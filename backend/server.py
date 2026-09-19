@@ -10,10 +10,12 @@ import uom_dao
 import auth_dao
 from auth import create_token, login_required
 
-app = Flask(__name__)  
+app = Flask(__name__)
 
 connection = get_sql_connection()
 
+
+# --- TEMPORARY: remove after confirming users table is created ---
 @app.route('/setupUsersTable', methods=['GET'])
 def setup_users_table():
     try:
@@ -33,6 +35,8 @@ def setup_users_table():
         return jsonify({'status': 'done', 'tables_now': tables})
     except Exception as e:
         return jsonify({'error': str(e)})
+# --- END TEMPORARY ---
+
 
 @app.route('/signup', methods=['POST'])
 def signup():
@@ -69,6 +73,7 @@ def login():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+
 @app.route('/getUOM', methods=['GET'])
 @login_required
 def get_uom():
@@ -77,6 +82,19 @@ def get_uom():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+
+@app.route('/insertUOM', methods=['POST'])
+@login_required
+def insert_uom():
+    request_payload = json.loads(request.form['data'])
+    uom_id = uom_dao.insert_new_uom(connection, request_payload)
+    response = jsonify({
+        'uom_id': uom_id
+    })
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
 @app.route('/getProducts', methods=['GET'])
 @login_required
 def get_products():
@@ -84,6 +102,7 @@ def get_products():
     response = jsonify(response)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
 
 @app.route('/insertProduct', methods=['POST'])
 @login_required
@@ -96,16 +115,18 @@ def insert_product():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/insertUOM', methods=['POST'])
+
+@app.route('/updateProduct', methods=['POST'])
 @login_required
-def insert_uom():
+def update_product():
     request_payload = json.loads(request.form['data'])
-    uom_id = uom_dao.insert_new_uom(connection, request_payload)
+    product_id = products_dao.update_product(connection, request_payload, request.user_id)
     response = jsonify({
-        'uom_id': uom_id
+        'product_id': product_id
     })
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
 
 @app.route('/getAllOrders', methods=['GET'])
 @login_required
@@ -114,6 +135,17 @@ def get_all_orders():
     response = jsonify(response)
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
+
+
+@app.route('/getOrderDetails', methods=['GET'])
+@login_required
+def get_order_details():
+    order_id = request.args.get('order_id')
+    response = orders_dao.get_order_details(connection, order_id, request.user_id)
+    response = jsonify(response)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
 
 @app.route('/insertOrder', methods=['POST'])
 @login_required
@@ -126,6 +158,7 @@ def insert_order():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+
 @app.route('/deleteProduct', methods=['POST'])
 @login_required
 def delete_product():
@@ -136,48 +169,6 @@ def delete_product():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-#new
-@app.route('/updateProduct', methods=['POST'])
-@login_required
-def update_product():
-    request_payload = json.loads(request.form['data'])
-    product_id = products_dao.update_product(connection, request_payload, request.user_id)
-    response = jsonify({
-        'product_id': product_id
-    })
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
-
-@app.route('/insertUOM', methods=['POST'])
-@login_required
-def insert_uom():
-    request_payload = json.loads(request.form['data'])
-    uom_id = uom_dao.insert_new_uom(connection, request_payload)
-    response = jsonify({
-        'uom_id': uom_id
-    })
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
-
-@app.route('/getOrderDetails', methods=['GET'])
-@login_required
-def get_order_details():
-    order_id = request.args.get('order_id')
-    response = orders_dao.get_order_details(connection, order_id, request.user_id)
-    response = jsonify(response)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
-
-
-
-'''
-@app.route('/getOrderDetails', methods=['GET'])
-def get_order_details():
-    order_id = request.args.get('order_id')
-    response = orders_dao.get_order_details(connection, order_id)
-    response = jsonify(response)
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response'''
 
 if __name__ == "__main__":
     print("Starting Python Flask Server For Grocery Store Management System")
