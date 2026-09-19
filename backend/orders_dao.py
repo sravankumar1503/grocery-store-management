@@ -1,10 +1,10 @@
 from datetime import datetime
 from sql_connection import get_sql_connection
 
-def insert_order(connection, order):
+def insert_order(connection, order, user_id):
   cursor = connection.cursor()
-  insert_order_query = ("INSERT INTO orders (customer_name, total, datetime) VALUES (%s, %s, %s)")
-  order_data = (order['customer_name'], order['total'], datetime.now())
+  insert_order_query = ("INSERT INTO orders (customer_name, total, datetime, user_id) VALUES (%s, %s, %s, %s)")
+  order_data = (order['customer_name'], order['total'], datetime.now(), user_id)
   cursor.execute(insert_order_query, order_data)
   order_id = cursor.lastrowid
 
@@ -19,16 +19,13 @@ def insert_order(connection, order):
       ])
 
   cursor.executemany(order_details_query, order_details_data)
-
-
-
   connection.commit()
   return order_id
 
-def get_all_orders(connection):
+def get_all_orders(connection, user_id):
   cursor = connection.cursor()
-  query = ("SELECT * FROM orders")
-  cursor.execute(query)
+  query = ("SELECT order_id, customer_name, total, datetime FROM orders WHERE user_id = %s")
+  cursor.execute(query, (user_id,))
   orders = []
   for (order_id, customer_name, total, datetime) in cursor:
     order = {
@@ -41,12 +38,16 @@ def get_all_orders(connection):
   return orders
 
 
-def get_order_details(connection, order_id):
+def get_order_details(connection, order_id, user_id):
   cursor = connection.cursor()
+  # The join to `orders` here also enforces that this order_id actually belongs
+  # to this user_id - without it, anyone could pass any order_id and see it.
   query = ("SELECT order_details.product_id, products.name, order_details.quantity, order_details.total_price "
-           "FROM order_details INNER JOIN products ON order_details.product_id = products.product_id "
-           "WHERE order_details.order_id = %s")
-  cursor.execute(query, (order_id,))
+           "FROM order_details "
+           "INNER JOIN products ON order_details.product_id = products.product_id "
+           "INNER JOIN orders ON order_details.order_id = orders.order_id "
+           "WHERE order_details.order_id = %s AND orders.user_id = %s")
+  cursor.execute(query, (order_id, user_id))
   details = []
   for (product_id, name, quantity, total_price) in cursor:
     details.append({
@@ -57,6 +58,7 @@ def get_order_details(connection, order_id):
     })
   return details
 
+
 if __name__ == "__main__":
   connection = get_sql_connection()
-  print(get_all_orders(connection))
+  print(get_all_orders(connection, 1))
