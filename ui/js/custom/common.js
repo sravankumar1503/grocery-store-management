@@ -1,14 +1,13 @@
 // Define your api here
-var productListApiUrl = 'http://127.0.0.1:5000/getProducts';
-var uomListApiUrl = 'http://127.0.0.1:5000/getUOM';
-var productSaveApiUrl = 'http://127.0.0.1:5000/insertProduct';
-var productDeleteApiUrl = 'http://127.0.0.1:5000/deleteProduct';
-var orderListApiUrl = 'http://127.0.0.1:5000/getAllOrders';
-var orderSaveApiUrl = 'http://127.0.0.1:5000/insertOrder';
-
-var productUpdateApiUrl = 'http://127.0.0.1:5000/updateProduct';
-var uomSaveApiUrl = 'http://127.0.0.1:5000/insertUOM';
-var orderDetailsApiUrl = 'http://127.0.0.1:5000/getOrderDetails';
+var productListApiUrl = 'https://grocery-store-management-1qh4.onrender.com/getProducts';
+var uomListApiUrl = 'https://grocery-store-management-1qh4.onrender.com/getUOM';
+var uomSaveApiUrl = 'https://grocery-store-management-1qh4.onrender.com/insertUOM';
+var productSaveApiUrl = 'https://grocery-store-management-1qh4.onrender.com/insertProduct';
+var productUpdateApiUrl = 'https://grocery-store-management-1qh4.onrender.com/updateProduct';
+var productDeleteApiUrl = 'https://grocery-store-management-1qh4.onrender.com/deleteProduct';
+var orderListApiUrl = 'https://grocery-store-management-1qh4.onrender.com/getAllOrders';
+var orderSaveApiUrl = 'https://grocery-store-management-1qh4.onrender.com/insertOrder';
+var orderDetailsApiUrl = 'https://grocery-store-management-1qh4.onrender.com/getOrderDetails';
 // For product drop in order
 var productsApiUrl = 'https://fakestoreapi.com/products';
 
