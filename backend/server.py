@@ -21,6 +21,15 @@ def get_uom():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+@app.route('/debugConfig', methods=['GET'])
+def debug_config():
+    return jsonify({
+        'DB_HOST': os.environ.get('DB_HOST'),
+        'DB_NAME': os.environ.get('DB_NAME'),
+        'DB_USER': os.environ.get('DB_USER'),
+        'DB_PORT': os.environ.get('DB_PORT')
+    })
+
 @app.route('/getProducts', methods=['GET'])
 def get_products():
     response = products_dao.get_all_products(connection)
