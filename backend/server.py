@@ -1,5 +1,6 @@
 from flask import Flask, request, jsonify
 from sql_connection import get_sql_connection
+from flask_cors import CORS
 import mysql.connector
 import json
 import os
