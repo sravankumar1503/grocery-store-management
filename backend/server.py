@@ -1,7 +1,10 @@
+import os
+
 from flask import Flask, request, jsonify
 from sql_connection import get_sql_connection
 import mysql.connector
 import json
+import os
 
 import products_dao
 import orders_dao
@@ -108,4 +111,5 @@ def get_order_details():
 
 if __name__ == "__main__":
     print("Starting Python Flask Server For Grocery Store Management System")
-    app.run(port=5000)
+    port = int(os.environ.get("PORT", 5000))
+    app.run(host="0.0.0.0", port=port)
