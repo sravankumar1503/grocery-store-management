@@ -150,6 +150,12 @@ def delete_product():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
+@app.route('/whoami', methods=['GET'])
+@login_required
+def whoami():
+    response = jsonify({'user_id': request.user_id})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 if __name__ == "__main__":
     print("Starting Python Flask Server For Grocery Store Management System")
