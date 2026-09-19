@@ -12,15 +12,10 @@ from auth import create_token, login_required
 
 app = Flask(__name__)
 
-connection = get_sql_connection()
-
-
-# --- TEMPORARY: remove after confirming users table is created ---
-
-
 
 @app.route('/signup', methods=['POST'])
 def signup():
+    connection = get_sql_connection()
     request_payload = json.loads(request.form['data'])
     username = request_payload.get('username', '').strip()
     password = request_payload.get('password', '')
@@ -41,6 +36,7 @@ def signup():
 
 @app.route('/login', methods=['POST'])
 def login():
+    connection = get_sql_connection()
     request_payload = json.loads(request.form['data'])
     username = request_payload.get('username', '').strip()
     password = request_payload.get('password', '')
@@ -55,9 +51,18 @@ def login():
     return response
 
 
+@app.route('/whoami', methods=['GET'])
+@login_required
+def whoami():
+    response = jsonify({'user_id': request.user_id})
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
+
+
 @app.route('/getUOM', methods=['GET'])
 @login_required
 def get_uom():
+    connection = get_sql_connection()
     response = uom_dao.get_uoms(connection)
     response = jsonify(response)
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -67,6 +72,7 @@ def get_uom():
 @app.route('/insertUOM', methods=['POST'])
 @login_required
 def insert_uom():
+    connection = get_sql_connection()
     request_payload = json.loads(request.form['data'])
     uom_id = uom_dao.insert_new_uom(connection, request_payload)
     response = jsonify({
@@ -79,6 +85,7 @@ def insert_uom():
 @app.route('/getProducts', methods=['GET'])
 @login_required
 def get_products():
+    connection = get_sql_connection()
     response = products_dao.get_all_products(connection, request.user_id)
     response = jsonify(response)
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -88,6 +95,7 @@ def get_products():
 @app.route('/insertProduct', methods=['POST'])
 @login_required
 def insert_product():
+    connection = get_sql_connection()
     request_payload = json.loads(request.form['data'])
     product_id = products_dao.insert_new_product(connection, request_payload, request.user_id)
     response = jsonify({
@@ -100,6 +108,7 @@ def insert_product():
 @app.route('/updateProduct', methods=['POST'])
 @login_required
 def update_product():
+    connection = get_sql_connection()
     request_payload = json.loads(request.form['data'])
     product_id = products_dao.update_product(connection, request_payload, request.user_id)
     response = jsonify({
@@ -112,6 +121,7 @@ def update_product():
 @app.route('/getAllOrders', methods=['GET'])
 @login_required
 def get_all_orders():
+    connection = get_sql_connection()
     response = orders_dao.get_all_orders(connection, request.user_id)
     response = jsonify(response)
     response.headers.add('Access-Control-Allow-Origin', '*')
@@ -121,6 +131,7 @@ def get_all_orders():
 @app.route('/getOrderDetails', methods=['GET'])
 @login_required
 def get_order_details():
+    connection = get_sql_connection()
     order_id = request.args.get('order_id')
     response = orders_dao.get_order_details(connection, order_id, request.user_id)
     response = jsonify(response)
@@ -131,6 +142,7 @@ def get_order_details():
 @app.route('/insertOrder', methods=['POST'])
 @login_required
 def insert_order():
+    connection = get_sql_connection()
     request_payload = json.loads(request.form['data'])
     order_id = orders_dao.insert_order(connection, request_payload, request.user_id)
     response = jsonify({
@@ -143,6 +155,7 @@ def insert_order():
 @app.route('/deleteProduct', methods=['POST'])
 @login_required
 def delete_product():
+    connection = get_sql_connection()
     products_dao.delete_product(connection, request.form['product_id'], request.user_id)
     response = jsonify({
         'product_id': request.form['product_id']
@@ -150,12 +163,6 @@ def delete_product():
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
-@app.route('/whoami', methods=['GET'])
-@login_required
-def whoami():
-    response = jsonify({'user_id': request.user_id})
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
 
 if __name__ == "__main__":
     print("Starting Python Flask Server For Grocery Store Management System")
