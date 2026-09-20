@@ -109,9 +109,7 @@ def update_product():
         'product_id': product_id
     })
     return response
-    
-@app.route('/migrateUserId', methods=['GET'])
-def migrate_user_id():
+
     try:
         conn = get_sql_connection()
         cursor = conn.cursor()
