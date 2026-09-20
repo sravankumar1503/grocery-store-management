@@ -109,7 +109,62 @@ def update_product():
         'product_id': product_id
     })
     return response
+    
+@app.route('/migrateUserId', methods=['GET'])
+def migrate_user_id():
+    try:
+        conn = get_sql_connection()
+        cursor = conn.cursor()
 
+        # Clear any leftover test data first, since existing rows can't get a NOT NULL user_id automatically
+        cursor.execute("SET SQL_SAFE_UPDATES = 0;")
+        cursor.execute("DELETE FROM order_details;")
+        cursor.execute("DELETE FROM orders;")
+        cursor.execute("DELETE FROM products;")
+        conn.commit()
+
+        results = {}
+
+        try:
+            cursor.execute("ALTER TABLE products ADD COLUMN user_id INT NOT NULL;")
+            conn.commit()
+            results['products_column'] = 'added'
+        except Exception as e:
+            results['products_column'] = str(e)
+
+        try:
+            cursor.execute("ALTER TABLE products ADD FOREIGN KEY (user_id) REFERENCES users(user_id);")
+            conn.commit()
+            results['products_fk'] = 'added'
+        except Exception as e:
+            results['products_fk'] = str(e)
+
+        try:
+            cursor.execute("ALTER TABLE orders ADD COLUMN user_id INT NOT NULL;")
+            conn.commit()
+            results['orders_column'] = 'added'
+        except Exception as e:
+            results['orders_column'] = str(e)
+
+        try:
+            cursor.execute("ALTER TABLE orders ADD FOREIGN KEY (user_id) REFERENCES users(user_id);")
+            conn.commit()
+            results['orders_fk'] = 'added'
+        except Exception as e:
+            results['orders_fk'] = str(e)
+
+        cursor.execute("DESCRIBE products;")
+        products_desc = cursor.fetchall()
+        cursor.execute("DESCRIBE orders;")
+        orders_desc = cursor.fetchall()
+
+        return jsonify({
+            'results': results,
+            'products_columns': products_desc,
+            'orders_columns': orders_desc
+        })
+    except Exception as e:
+        return jsonify({'error': str(e)})
 
 @app.route('/getAllOrders', methods=['GET'])
 @login_required
