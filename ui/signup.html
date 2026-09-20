@@ -1,37 +1,57 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title> GSMS - Sign Up </title>
+    <title>GSMS · Sign up</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/material-design-iconic-font/2.2.0/css/material-design-iconic-font.min.css">
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:400,300,600,700">
-    <link media="all" type="text/css" rel="stylesheet" href="css/bootstrap.min.css">
-    <link media="all" type="text/css" rel="stylesheet" href="css/style.css?v=1.0">
-    <link media="all" type="text/css" rel="stylesheet" href="css/custom.css?v=1.3.3">
+    <link media="all" type="text/css" rel="stylesheet" href="css/auth.css?v=1.0">
 </head>
-<body class="tooltips">
-<div class="container">
-    <div class="right content-page" style="margin: 60px auto; max-width: 400px; float: none;">
-        <div class="body content rows">
-            <div class="box-info full" id="taskFormContainer">
-                <h2>Create Account</h2>
-                <div id="signupError" class="alert alert-danger" style="display:none;"></div>
-                <form id="signupForm">
-                    <div class="form-group">
-                        <label>Username</label>
-                        <input class="form-control" name="username" id="username" type="text" value="">
-                    </div>
-                    <div class="form-group">
-                        <label>Password</label>
-                        <input class="form-control" name="password" id="password" type="password" value="">
-                    </div>
-                    <button type="button" class="btn btn-primary btn-block" id="signupButton">Sign Up</button>
-                </form>
-                <p class="mt-3 text-center">Already have an account? <a href="login.html">Login</a></p>
+<body>
+<div class="auth-shell">
+
+    <div class="auth-brand">
+        <p class="auth-wordmark">GSMS</p>
+        <p class="auth-tagline">Set up your own stock room in under a minute — nothing shared, nothing shown to anyone else.</p>
+        <div class="auth-features">
+            <div class="auth-feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M3 8l9-5 9 5-9 5-9-5z"/><path d="M3 8v8l9 5 9-5V8"/><path d="M12 13v8"/></svg>
+                <span>Stock, tracked by the unit</span>
+            </div>
+            <div class="auth-feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 6h15l-1.5 9h-12z"/><path d="M6 6l-1-3H2"/><circle cx="9" cy="19" r="1.4"/><circle cx="17" cy="19" r="1.4"/></svg>
+                <span>Orders, from till to total</span>
+            </div>
+            <div class="auth-feature">
+                <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="3" width="16" height="18" rx="1.5"/><path d="M8 7h8M8 11h8M8 15h5"/></svg>
+                <span>A private ledger, just for you</span>
             </div>
         </div>
     </div>
+
+    <div class="auth-form-panel">
+        <div class="auth-form-card">
+            <h1 class="auth-form-heading">Open an account</h1>
+            <p class="auth-form-sub">Your products and orders stay visible to you alone.</p>
+
+            <div id="signupError" class="auth-error"></div>
+
+            <form id="signupForm">
+                <div class="auth-field">
+                    <label for="username">Username</label>
+                    <input name="username" id="username" type="text" autocomplete="username">
+                </div>
+                <div class="auth-field">
+                    <label for="password">Password</label>
+                    <input name="password" id="password" type="password" autocomplete="new-password">
+                    <p class="auth-hint">At least 6 characters.</p>
+                </div>
+                <button type="button" class="auth-submit" id="signupButton">Create account</button>
+            </form>
+
+            <p class="auth-switch">Already set up? <a href="login.html">Log in</a></p>
+        </div>
+    </div>
+
 </div>
 <script src="js/packages/jquery.min.js"></script>
 <script src="js/custom/common.js"></script>
