@@ -58,6 +58,38 @@ def get_order_details(connection, order_id, user_id):
     })
   return details
 
+def get_order_receipt(connection, order_id, user_id):
+  cursor = connection.cursor()
+
+  header_query = ("SELECT customer_name, datetime, total FROM orders WHERE order_id = %s AND user_id = %s")
+  cursor.execute(header_query, (order_id, user_id))
+  header_row = cursor.fetchone()
+  if header_row is None:
+    return None
+
+  header = {
+    'customer_name': header_row[0],
+    'datetime': header_row[1],
+    'total': header_row[2]
+  }
+
+  items_query = ("SELECT products.name, order_details.quantity, products.price_per_unit, order_details.total_price "
+                  "FROM order_details "
+                  "INNER JOIN products ON order_details.product_id = products.product_id "
+                  "INNER JOIN orders ON order_details.order_id = orders.order_id "
+                  "WHERE order_details.order_id = %s AND orders.user_id = %s")
+  cursor.execute(items_query, (order_id, user_id))
+  items = []
+  for (name, quantity, act_price, total_price) in cursor:
+    items.append({
+      'product_name': name,
+      'quantity': quantity,
+      'act_price': act_price,
+      'total_price': total_price
+    })
+
+  header['items'] = items
+  return header
 
 if __name__ == "__main__":
   connection = get_sql_connection()

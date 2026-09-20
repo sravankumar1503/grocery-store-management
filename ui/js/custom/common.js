@@ -10,6 +10,7 @@ var orderSaveApiUrl = 'https://grocery-store-management-1qh4.onrender.com/insert
 var orderDetailsApiUrl = 'https://grocery-store-management-1qh4.onrender.com/getOrderDetails';
 var signupApiUrl = 'https://grocery-store-management-1qh4.onrender.com/signup';
 var loginApiUrl = 'https://grocery-store-management-1qh4.onrender.com/login';
+var orderReceiptApiUrl = 'https://grocery-store-management-1qh4.onrender.com/getOrderReceipt';
 // For product drop in order
 var productsApiUrl = 'https://fakestoreapi.com/products';
 
@@ -126,6 +127,8 @@ $(function () {
         logout();
     });
 });
+
+
 
 function productDropParser(product) {
     return {

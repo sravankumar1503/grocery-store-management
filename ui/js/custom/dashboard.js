@@ -13,6 +13,7 @@ $(function () {
                 '<td>'+ order.customer_name +'</td>'+
                 '<td>'+ orderTotal.toFixed(2) +' Rs</td>'+
                 '<td><span class="btn btn-xs btn-primary view-order" data-id="'+ order.order_id +'">View</span></td>'+
+                '<span class="btn btn-xs btn-secondary print-order" data-id="'+ order.order_id +'">Print</span>'+
                 '</tr>';
         });
             table += '<tr><td colspan="3" style="text-align: end"><b>Total</b></td><td><b>'+ totalCost.toFixed(2) +' Rs</b></td><td></td></tr>';
@@ -29,6 +30,11 @@ $(document).on("click", ".view-order", function () {
     modalBody.html('<img src="https://demo.test.cloint.com/assets/images/spinner.gif" width="40" style="margin: 60px auto;" alt="">');
     $("#myModal").modal('show');
 
+    $(document).on("click", ".print-order", function () {
+        var orderId = $(this).data('id');
+        window.open('receipt.html?order_id=' + orderId, '_blank');
+    });
+    
     $.get(orderDetailsApiUrl, { order_id: orderId }, function (response) {
         var table = '<table class="table table-bordered text-left">' +
             '<thead><th>Product</th><th>Quantity</th><th>Total Price</th></thead><tbody>';

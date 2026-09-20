@@ -205,6 +205,17 @@ def delete_product():
     })
     return response
 
+@app.route('/getOrderReceipt', methods=['GET'])
+@login_required
+def get_order_receipt():
+    connection = get_sql_connection()
+    order_id = request.args.get('order_id')
+    receipt = orders_dao.get_order_receipt(connection, order_id, request.user_id)
+    if receipt is None:
+        return jsonify({'error': 'Order not found'}), 404
+    response = jsonify(receipt)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 if __name__ == "__main__":
     print("Starting Python Flask Server For Grocery Store Management System")

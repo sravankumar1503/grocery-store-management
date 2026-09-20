@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GSMS · Receipt</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link media="all" type="text/css" rel="stylesheet" href="css/receipt.css?v=1.0">
+</head>
+<body>
+
+<div class="receipt-toolbar no-print">
+    <a href="javascript:void(0)" onclick="window.close()">&larr; Close</a>
+    <button type="button" id="printButton">Print / Save as PDF</button>
+</div>
+
+<div class="receipt-sheet" id="receiptSheet">
+    <p class="receipt-loading">Loading receipt&hellip;</p>
+</div>
+
+<script src="js/packages/jquery.min.js"></script>
+<script src="js/custom/common.js"></script>
+<script>requireLogin();</script>
+<script src="js/custom/receipt.js"></script>
+</body>
+</html>
