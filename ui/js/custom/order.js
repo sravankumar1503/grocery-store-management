@@ -25,7 +25,7 @@ $("#addMoreButton").click(function () {
 });
 
 $(document).on("click", ".remove-row", function (){
-    $(this).closest('.row').remove();
+    $(this).closest('.product-item').remove();
     updateGrandTotal();
 });
 
@@ -33,7 +33,7 @@ $(document).on("change", ".cart-product", function (){
     var product_id = $(this).val();
     var price = productPrices[product_id];
 
-    $(this).closest('.row').find('#product_price').val(price);
+    $(this).closest('.product-item').find('#product_price').val(price);
     calculateValue();
 });
 
