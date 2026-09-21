@@ -9,77 +9,30 @@ import products_dao
 import orders_dao
 import uom_dao
 import auth_dao
-import otp_dao
-from email_service import send_otp_email
 from auth import create_token, login_required
 
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/sendOtp', methods=['POST'])
-def send_otp():
-    connection = get_sql_connection()
-    request_payload = json.loads(request.form['data'])
-    email = request_payload.get('email', '').strip().lower()
-
-    if not email or '@' not in email:
-        return jsonify({'error': 'Please enter a valid email address'}), 400
-
-    existing_user = auth_dao.get_user_by_username(connection, email)
-    if existing_user:
-        return jsonify({'error': 'An account with this email already exists'}), 400
-
-    otp_code = otp_dao.create_otp(connection, email)
-
-    try:
-        send_otp_email(email, otp_code)
-    except Exception as e:
-        return jsonify({'error': 'Could not send the verification email.', 'debug_detail': str(e)}), 500
-
-    response = jsonify({'status': 'sent'})
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
-
-
-@app.route('/verifyOtp', methods=['POST'])
-def verify_otp():
-    connection = get_sql_connection()
-    request_payload = json.loads(request.form['data'])
-    email = request_payload.get('email', '').strip().lower()
-    otp_code = request_payload.get('otp', '').strip()
-
-    ok, error = otp_dao.verify_otp(connection, email, otp_code)
-    if not ok:
-        return jsonify({'error': error}), 400
-
-    response = jsonify({'status': 'verified'})
-    response.headers.add('Access-Control-Allow-Origin', '*')
-    return response
-
 @app.route('/signup', methods=['POST'])
 def signup():
     connection = get_sql_connection()
     request_payload = json.loads(request.form['data'])
-    username = request_payload.get('username', '').strip().lower()
+    username = request_payload.get('username', '').strip()
     password = request_payload.get('password', '')
 
     if not username or not password:
-        return jsonify({'error': 'Email and password are required'}), 400
-
-    if not otp_dao.is_email_verified_recently(connection, username):
-        return jsonify({'error': 'Please verify your email before creating an account'}), 400
+        return jsonify({'error': 'Username and password are required'}), 400
 
     existing = auth_dao.get_user_by_username(connection, username)
     if existing:
-        return jsonify({'error': 'An account with this email already exists'}), 400
+        return jsonify({'error': 'Username already taken'}), 400
 
     user_id = auth_dao.create_user(connection, username, password)
-    otp_dao.clear_otp(connection, username)
     token = create_token(user_id, username)
     response = jsonify({'token': token, 'username': username})
     response.headers.add('Access-Control-Allow-Origin', '*')
     return response
-
 
 @app.route('/login', methods=['POST'])
 def login():
