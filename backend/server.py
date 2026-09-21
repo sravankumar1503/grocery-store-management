@@ -16,28 +16,6 @@ from auth import create_token, login_required
 app = Flask(__name__)
 CORS(app)
 
-@app.route('/setupOtpTable', methods=['GET'])
-def setup_otp_table():
-    try:
-        conn = get_sql_connection()
-        cursor = conn.cursor()
-        cursor.execute("""
-            CREATE TABLE IF NOT EXISTS otp_verifications (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                email VARCHAR(255) NOT NULL,
-                otp_code VARCHAR(6) NOT NULL,
-                is_verified TINYINT(1) NOT NULL DEFAULT 0,
-                expires_at DATETIME NOT NULL,
-                created_at DATETIME NOT NULL
-            );
-        """)
-        conn.commit()
-        cursor.execute("SHOW TABLES;")
-        tables = cursor.fetchall()
-        return jsonify({'status': 'done', 'tables_now': tables})
-    except Exception as e:
-        return jsonify({'error': str(e)})
-
 @app.route('/sendOtp', methods=['POST'])
 def send_otp():
     connection = get_sql_connection()
