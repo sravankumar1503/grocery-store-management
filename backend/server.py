@@ -34,7 +34,7 @@ def send_otp():
     try:
         send_otp_email(email, otp_code)
     except Exception as e:
-        return jsonify({'error': 'Could not send the verification email. Please try again.'}), 500
+        return jsonify({'error': 'Could not send the verification email.', 'debug_detail': str(e)}), 500
 
     response = jsonify({'status': 'sent'})
     response.headers.add('Access-Control-Allow-Origin', '*')
